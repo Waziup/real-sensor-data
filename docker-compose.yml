@@ -1,0 +1,153 @@
+version: '3.6'
+services:
+  main-app:
+      image: waziup/real-sensor-data:latest
+      container_name: waziup.real-sensor-data
+      build:
+        context: ./
+        target: development  # development | test | production (default) # docker-compose up --build
+      depends_on: 
+        - postgres
+      ports: 
+        - 8080:8080
+        - 2345:2345
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "200k"
+          max-file: "10"
+      volumes:
+        - ./:/root/app
+        - ./:/go/src/app
+      networks:
+        - sensordata
+      environment:
+        SERVING_ADDR: ${SERVING_ADDR:-:8080}
+        POSTGRES_DB: ${POSTGRES_DB:-waziup}
+        POSTGRES_USER: ${POSTGRES_USER:-root}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+        POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+        POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+        # - INFLUXDB_ADDR=http://influxdb:8086
+        # - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+        # - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+        # - INFLUXDB_ORG=${INFLUXDB_ORG}
+        # - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+        # - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+    #   healthcheck:
+    #     test: curl --fail --unix-socket /root/app/proxy.sock http://localhost/ || exit 1
+    #     interval: 30s
+    #     retries: 10 # Will try for 5 minutes      
+      restart: always
+      security_opt:
+        - "seccomp:unconfined"
+    #   entrypoint: "/root/app/wazigate-system"
+
+  #----------------#
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-waziup}
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    networks:
+      - sensordata
+    ports:
+      - 5432:5432
+    # healthcheck:
+    #   test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+    #   timeout: 45s
+    #   interval: 10s
+    #   retries: 10
+    # restart: always
+
+  #----------------#
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    depends_on: 
+      - postgres
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - ./pgadmin:/root/.pgadmin
+       - ./db-backups:/backups
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - sensordata
+    restart: unless-stopped
+
+  #----------------#
+
+  # influxdb:
+  #   container_name: influxdb
+  #   image: influxdb:alpine
+  #   ports:
+  #     - '8086:8086'
+  #     - '2003:2003'   # Graphite
+  #   volumes:
+  #     - influxdb-storage:/var/lib/influxdb
+  #   #   - influxdb-config.json:/influxdb-conf/config.json
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "200k"
+  #       max-file: "10"
+  #   environment:
+  #     - INFLUXDB_DB=thingspeak
+  #     - INFLUXDB_HTTP_AUTH_ENABLED=true
+  #     - DOCKER_INFLUXDB_INIT_MODE=setup
+  #     - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
+  #     - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+  #     - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
+  #     - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
+  #     - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
+
+  #   #------------#
+
+
+#   chronograf:
+#     image: chronograf:latest
+#     ports:
+#       - '127.0.0.1:8888:8888'
+#     volumes:
+#       - chronograf-storage:/var/lib/chronograf
+#     depends_on:
+#       - influxdb
+#     environment:
+#       - INFLUXDB_URL=http://influxdb:8086
+#       - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+#       - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+
+#   grafana:
+#     image: grafana/grafana:latest
+#     ports:
+#       - '3000:3000'
+#     volumes:
+#       - grafana-storage:/var/lib/grafana
+#       - ./grafana-provisioning/:/etc/grafana/provisioning
+#     depends_on:
+#       - influxdb
+#     environment:
+#       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+#       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+
+
+# volumes:
+#   influxdb-storage:
+#   chronograf-storage:
+#   grafana-storage:
+
+networks:
+  sensordata:
+    driver: bridge
