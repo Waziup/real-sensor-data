@@ -23,6 +23,7 @@ services:
         - sensordata
       environment:
         SERVING_ADDR: ${SERVING_ADDR:-:8080}
+        SERVING_ADDR: ${DATA_EXTRACTION_INTERVAL:-60} # in minutes
         POSTGRES_DB: ${POSTGRES_DB:-waziup}
         POSTGRES_USER: ${POSTGRES_USER:-root}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}

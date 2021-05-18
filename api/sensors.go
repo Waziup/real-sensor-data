@@ -2,6 +2,7 @@ package api
 
 import (
 	"log"
+	"math"
 	"net/http"
 	"real-sensor-data/database"
 	"real-sensor-data/global"
@@ -20,6 +21,29 @@ func GetSensors(resp http.ResponseWriter, req *http.Request, params routing.Para
 
 	limit, offset, page := tools.GetLimitOffset(req)
 
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT COUNT(*) AS "total" FROM (SELECT DISTINCT "name", "channel_id" FROM "sensor_values") AS "tmp"`
+		rows, err := global.DB.Query(SQL, database.QueryParams{})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
+
 	SQL := `SELECT DISTINCT "name", "channel_id" FROM "sensor_values" LIMIT $1 OFFSET $2`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{limit, offset})
@@ -29,7 +53,7 @@ func GetSensors(resp http.ResponseWriter, req *http.Request, params routing.Para
 		return
 	}
 
-	tools.SendJSON(resp, map[string]interface{}{"page": page, "rows": rows})
+	tools.SendJSON(resp, map[string]interface{}{"pagination": pagination, "rows": rows})
 }
 
 /*-------------*/
@@ -39,8 +63,30 @@ func GetSensors(resp http.ResponseWriter, req *http.Request, params routing.Para
 func GetSearchSensors(resp http.ResponseWriter, req *http.Request, params routing.Params) {
 
 	query := params.ByName("query")
-
 	limit, offset, page := tools.GetLimitOffset(req)
+
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT COUNT(*) AS "total" FROM (SELECT DISTINCT "name", "channel_id" FROM "sensor_values" WHERE "name" ILIKE $1) AS "tmp"`
+		rows, err := global.DB.Query(SQL, database.QueryParams{"%" + query + "%"})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
 
 	SQL := `SELECT DISTINCT "name", "channel_id" FROM "sensor_values" WHERE "name" ILIKE $1 LIMIT $2 OFFSET $3`
 
@@ -51,12 +97,12 @@ func GetSearchSensors(resp http.ResponseWriter, req *http.Request, params routin
 		return
 	}
 
-	tools.SendJSON(resp, map[string]interface{}{"query": query, "page": page, "rows": rows})
+	tools.SendJSON(resp, map[string]interface{}{"query": query, "pagination": pagination, "rows": rows})
 }
 
 /*-------------*/
 /*
-* This function implements GET /sensors/:channel/sensors/:name/values
+* This function implements GET /channels/:channel/sensors/:name/values
  */
 func GetSensorValues(resp http.ResponseWriter, req *http.Request, params routing.Params) {
 
@@ -69,6 +115,34 @@ func GetSensorValues(resp http.ResponseWriter, req *http.Request, params routing
 	}
 
 	limit, offset, page := tools.GetLimitOffset(req)
+
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT 
+					COUNT(*) AS "total" 
+				FROM "sensor_values" 
+				WHERE 
+					"name" = $1 AND
+					"channel_id" = $2`
+		rows, err := global.DB.Query(SQL, database.QueryParams{name, channel_id})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
 
 	SQL := `SELECT * 
 			FROM "sensor_values" 
@@ -84,7 +158,7 @@ func GetSensorValues(resp http.ResponseWriter, req *http.Request, params routing
 		return
 	}
 
-	tools.SendJSON(resp, map[string]interface{}{"page": page, "rows": rows})
+	tools.SendJSON(resp, map[string]interface{}{"pagination": pagination, "rows": rows})
 }
 
 /*-------------*/

@@ -2,6 +2,7 @@ package api
 
 import (
 	"log"
+	"math"
 	"net/http"
 	"real-sensor-data/database"
 	"real-sensor-data/global"
@@ -20,6 +21,29 @@ func GetChannels(resp http.ResponseWriter, req *http.Request, params routing.Par
 
 	limit, offset, page := tools.GetLimitOffset(req)
 
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT COUNT(*) AS "total" FROM "channels"`
+		rows, err := global.DB.Query(SQL, database.QueryParams{})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
+
 	SQL := `SELECT * FROM "channels" LIMIT $1 OFFSET $2`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{limit, offset})
@@ -29,7 +53,7 @@ func GetChannels(resp http.ResponseWriter, req *http.Request, params routing.Par
 		return
 	}
 
-	tools.SendJSON(resp, map[string]interface{}{"page": page, "rows": rows})
+	tools.SendJSON(resp, map[string]interface{}{"pagination": pagination, "rows": rows})
 }
 
 /*-------------*/
@@ -91,6 +115,29 @@ func GetChannelSensors(resp http.ResponseWriter, req *http.Request, params routi
 		return
 	}
 
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT COUNT(*) AS "total" FROM (SELECT DISTINCT "name", "channel_id" FROM "sensor_values" WHERE "channel_id" = $1) AS "tmp"`
+		rows, err := global.DB.Query(SQL, database.QueryParams{channel_id})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
+
 	SQL = `SELECT 
 				DISTINCT "name", "channel_id" 
 			FROM "sensor_values" 
@@ -106,9 +153,9 @@ func GetChannelSensors(resp http.ResponseWriter, req *http.Request, params routi
 	}
 
 	tools.SendJSON(resp, map[string]interface{}{
-		"channel": channelRows[0],
-		"page":    page,
-		"rows":    rows,
+		"channel":    channelRows[0],
+		"pagination": pagination,
+		"rows":       rows,
 	})
 }
 

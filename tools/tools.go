@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"real-sensor-data/global"
 	"strconv"
 )
 
@@ -40,7 +41,7 @@ func GetLimitOffset(req *http.Request) (int, int, int) {
 		}
 	}
 
-	limit := 200
+	limit := global.RowsPerPage
 	offset := (page - 1) * limit
 
 	return limit, offset, page
