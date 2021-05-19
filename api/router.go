@@ -21,6 +21,7 @@ func setupRouter() *routing.Router {
 	// router.GET("/docs/:file_path", APIDocs)
 
 	router.GET("/dataCollection/status", GetDataCollectionStatus)
+	router.GET("/dataCollection/statistics", GetDataCollectionStatistics)
 
 	router.GET("/sensors", GetSensors)
 	router.GET("/sensors/search/:query", GetSearchSensors)

@@ -1,6 +1,9 @@
 package global
 
-import "real-sensor-data/database"
+import (
+	"real-sensor-data/database"
+	"time"
+)
 
 /*-------------*/
 
@@ -19,6 +22,7 @@ var DataCollectorProgress struct {
 
 	NewExtractedChannels     int64
 	NewExtractedSensorValues int64
+	LastExtractionTime       time.Time
 }
 
 /*-------------*/

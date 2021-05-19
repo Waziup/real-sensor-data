@@ -44,7 +44,17 @@ func GetSensors(resp http.ResponseWriter, req *http.Request, params routing.Para
 
 	/*------*/
 
-	SQL := `SELECT DISTINCT "name", "channel_id" FROM "sensor_values" LIMIT $1 OFFSET $2`
+	SQL := `SELECT 
+				DISTINCT 
+					s."name", 
+					s."channel_id", 
+					c."name"	AS "channel_name"
+			FROM 
+				"sensor_values"	AS s,
+				"channels"		AS c
+			WHERE
+				c."id" = s."channel_id"
+			LIMIT $1 OFFSET $2`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{limit, offset})
 	if err != nil {
@@ -88,7 +98,18 @@ func GetSearchSensors(resp http.ResponseWriter, req *http.Request, params routin
 
 	/*------*/
 
-	SQL := `SELECT DISTINCT "name", "channel_id" FROM "sensor_values" WHERE "name" ILIKE $1 LIMIT $2 OFFSET $3`
+	SQL := `SELECT 
+				DISTINCT 
+					s."name", 
+					s."channel_id", 
+					c."name"	AS "channel_name"
+			FROM 
+				"sensor_values"	AS s,
+				"channels"		AS c
+			WHERE
+				c."id" = s."channel_id" AND
+				s."name" ILIKE $1
+			LIMIT $2 OFFSET $3`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{"%" + query + "%", limit, offset})
 	if err != nil {

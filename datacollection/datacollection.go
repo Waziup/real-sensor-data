@@ -33,6 +33,10 @@ func Init() {
 
 			/*---------*/
 
+			global.DataCollectorProgress.LastExtractionTime = time.Now()
+
+			/*---------*/
+
 			dataExtractionInterval := 60
 
 			if val := os.Getenv("DATA_EXTRACTION_INTERVAL"); val != "" {
