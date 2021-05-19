@@ -1,0 +1,269 @@
+{
+    "Ampere": {
+      "min": 0, "max":10000
+    },
+    "Bar": {
+      "min": -100, "max":1000
+    },
+    "BeatPerMinute": {
+      "min": 0, "max":1000
+    },
+    "Candela": {
+      "min": 0, "max":10000000
+    },
+    "Centibar": {
+      "min": 0, "max":100000
+    },
+    "Centimetre": {
+      "min": 0, "max":100000
+    },
+    "Coulomb": {
+      "min": 0, "max":100000
+    },
+    "Day": {
+      "min": 0, "max":31
+    },
+    "Decibel": {
+      "min": -100000, "max":100000
+    },
+    "DecibelA": {
+      "min": -100000, "max":100000
+    },
+    "DecibelMilliwatt": {
+      "min": -100000, "max":100000
+    },
+    "DegreeAngle": {
+      "min": -360, "max":360
+    },
+    "DegreeAnglePerSecond": {
+      "min": 0, "max":100000
+    },
+    "DegreeCelsius": {
+      "min": -100000, "max":100000
+    },
+    "DegreeFahrenheit": {
+      "min": -100000, "max":100000
+    },
+    "Dimensionless": {
+      "min": 0, "max":100000
+    },
+    "EAQI": {
+      "min": 0, "max":100000
+    },
+    "Farad": {
+      "min": 0, "max":100000
+    },
+    "Gauss": {
+      "min": 0, "max":100000
+    },
+    "Gram": {
+      "min": 0, "max":100000
+    },
+    "GramPerCubicMetre": {
+      "min": 0, "max":100000
+    },
+    "GramPerLitre": {
+      "min": 0, "max":100000
+    },
+    "Hertz": {
+      "min": 0, "max":100000
+    },
+    "Hour": {
+      "min": 0, "max":100000
+    },
+    "Joule": {
+      "min": 0, "max":100000
+    },
+    "Kelvin": {
+      "min": 0, "max":100000
+    },
+    "KilobitsPerSecond": {
+      "min": 0, "max":100000
+    },
+    "Kilogram": {
+      "min": 0, "max":100000
+    },
+    "KilogramPerCubicMetre": {
+      "min": 0, "max":100000
+    },
+    "Kilometre": {
+      "min": 0, "max":100000
+    },
+    "KilometrePerHour": {
+      "min": 0, "max":100000
+    },
+    "KiloPascal": {
+      "min": 0, "max":100000
+    },
+    "KiloWattHour": {
+      "min": 0, "max":100000
+    },
+    "Litre": {
+      "min": 0, "max":100000
+    },
+    "LitrePer100Kilometres": {
+      "min": 0, "max":100000
+    },
+    "Lumen": {
+      "min": 0, "max":100000
+    },
+    "Lux": {
+      "min": 0, "max":100000
+    },
+    "Metre": {
+      "min": 0, "max":100000
+    },
+    "MetrePerSecond": {
+      "min": 0, "max":100000
+    },
+    "MetrePerSecondSquare": {
+      "min": 0, "max":100000
+    },
+    "Microampere": {
+      "min": 0, "max":100000
+    },
+    "Microgram": {
+      "min": 0, "max":100000
+    },
+    "MicrogramPerCubicMetre": {
+      "min": 0, "max":100000
+    },
+    "MicroSiemens": {
+      "min": 0, "max":100000
+    },
+    "Microvolt": {
+      "min": 0, "max":100000
+    },
+    "Microwatt": {
+      "min": 0, "max":100000
+    },
+    "MicrowattPerSquareCentimetre": {
+      "min": 0, "max":100000
+    },
+    "Milliampere": {
+      "min": 0, "max":100000
+    },
+    "Millibar": {
+      "min": 0, "max":100000
+    },
+    "Milligram": {
+      "min": 0, "max":100000
+    },
+    "MilligramPerCubicMetre": {
+      "min": 0, "max":100000
+    },
+    "MilligramPerLitre": {
+      "min": 0, "max":100000
+    },
+    "MilligramPerDecilitre": {
+      "min": 0, "max":100000
+    },
+    "MilligramPerSquareMetre": {
+      "min": 0, "max":100000
+    },
+    "Millilitre": {
+      "min": 0, "max":100000
+    },
+    "Millimetre": {
+      "min": 0, "max":100000
+    },
+    "MillimetreMercure": {
+      "min": 0, "max":100000
+    },
+    "MillimetrePerHour": {
+      "min": 0, "max":100000
+    },
+    "MilliMolPerLitre": {
+      "min": 0, "max":100000
+    },
+    "Millisecond": {
+      "min": 0, "max":100000
+    },
+    "Millivolt": {
+      "min": 0, "max":100000
+    },
+    "MillivoltPerMetre": {
+      "min": 0, "max":100000
+    },
+    "Milliwatt": {
+      "min": 0, "max":100000
+    },
+    "MinuteAngle": {
+      "min": 0, "max":100000
+    },
+    "MinuteTime": {
+      "min": 0, "max":100000
+    },
+    "Ohm": {
+      "min": 0, "max":100000
+    },
+    "Okta": {
+      "min": 0, "max":100000
+    },
+    "Other": {
+      "min": 0, "max":100000
+    },
+    "PartsPerBillion": {
+      "min": 0, "max":100000
+    },
+    "PartsPerMillion": {
+      "min": 0, "max":100000
+    },
+    "Pascal": {
+      "min": 0, "max":100000
+    },
+    "Percent": {
+      "min": 0, "max":100000
+    },
+    "Radian": {
+      "min": 0, "max":100000
+    },
+    "RadianPerSecond": {
+      "min": 0, "max":100000
+    },
+    "RadiationParticlesPerMinute": {
+      "min": 0, "max":100000
+    },
+    "RevolutionsPerMinute": {
+      "min": 0, "max":100000
+    },
+    "SecondAngle": {
+      "min": 0, "max":100000
+    },
+    "SecondTime": {
+      "min": 0, "max":100000
+    },
+    "Siemens": {
+      "min": 0, "max":100000
+    },
+    "SiemensPerMetre": {
+      "min": 0, "max":100000
+    },
+    "Tesla": {
+      "min": 0, "max":100000
+    },
+    "Tonne": {
+      "min": 0, "max":100000
+    },
+    "Volt": {
+      "min": 0, "max":100000
+    },
+    "VoltAmpereReactive": {
+      "min": 0, "max":100000
+    },
+    "VoltPerMetre": {
+      "min": 0, "max":100000
+    },
+    "Watt": {
+      "min": 0, "max":100000
+    },
+    "WattPerSquareMetre": {
+      "min": 0, "max":100000
+    },
+    "Weber": {
+      "min": 0, "max":100000
+    },
+    "Year": {
+      "min": 0, "max":100000
+    }
+  }

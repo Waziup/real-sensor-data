@@ -1,0 +1,399 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Main page renders correctly 1`] = `
+<div
+  className="Main"
+>
+  <div
+    className="MuiContainer-root MuiContainer-maxWidthMd"
+  >
+    <form
+      autoComplete="on"
+      className="makeStyles-root-1"
+      noValidate={true}
+      onSubmit={[Function]}
+    >
+      <div
+        className="MuiFormControl-root makeStyles-box-3"
+      >
+        <label
+          className="MuiFormLabel-root"
+        >
+          Devices:
+        </label>
+        <div
+          className="MuiFormGroup-root makeStyles-fieldset-4"
+        >
+          <div
+            className="MuiFormControl-root MuiTextField-root"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="numDevices"
+              id="numDevices-label"
+            >
+              Number of devices
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="numDevices"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={10}
+              />
+            </div>
+          </div>
+          <div>
+            Loading codecs...
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiFormControl-root makeStyles-box-3"
+      >
+        <label
+          className="MuiFormLabel-root"
+        >
+          Num of Sensors:
+        </label>
+        <div
+          className="MuiFormGroup-root makeStyles-fieldset-4 MuiFormGroup-row"
+        >
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="minSensors"
+              id="minSensors-label"
+            >
+              Min
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="minSensors"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={1}
+              />
+            </div>
+          </div>
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="maxSensors"
+              id="maxSensors-label"
+            >
+              Max
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="maxSensors"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={5}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiFormControl-root makeStyles-box-3"
+      >
+        <label
+          className="MuiFormLabel-root"
+        >
+          Values Range:
+        </label>
+        <div
+          className="MuiFormGroup-root makeStyles-fieldset-4 MuiFormGroup-row"
+        >
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="minValues"
+              id="minValues-label"
+            >
+              Min
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="minValues"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={-1000}
+              />
+            </div>
+          </div>
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="maxValues"
+              id="maxValues-label"
+            >
+              Max
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="maxValues"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={1000}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiFormControl-root makeStyles-box-3"
+      >
+        <label
+          className="MuiFormLabel-root"
+        >
+          Num of value entries for each device:
+        </label>
+        <div
+          className="MuiFormGroup-root makeStyles-fieldset-4 MuiFormGroup-row"
+        >
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="minEntries"
+              id="minEntries-label"
+            >
+              Min
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="minEntries"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={5}
+              />
+            </div>
+          </div>
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="maxEntries"
+              id="maxEntries-label"
+            >
+              Max
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="maxEntries"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={10}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiFormControl-root makeStyles-box-3"
+      >
+        <label
+          className="MuiFormLabel-root"
+        >
+          Delay between two entries (in minutes):
+        </label>
+        <div
+          className="MuiFormGroup-root makeStyles-fieldset-4 MuiFormGroup-row"
+        >
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="minTime"
+              id="minTime-label"
+            >
+              Min
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="minTime"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={10}
+              />
+            </div>
+          </div>
+          <div
+            className="MuiFormControl-root MuiTextField-root makeStyles-numInput-5"
+          >
+            <label
+              className="MuiFormLabel-root MuiInputLabel-root MuiInputLabel-formControl MuiInputLabel-animated MuiInputLabel-shrink MuiFormLabel-filled"
+              data-shrink={true}
+              htmlFor="maxTime"
+              id="maxTime-label"
+            >
+              Max
+            </label>
+            <div
+              className="MuiInputBase-root MuiInput-root MuiInput-underline MuiInputBase-formControl MuiInput-formControl"
+              onClick={[Function]}
+            >
+              <input
+                aria-invalid={false}
+                autoFocus={false}
+                className="MuiInputBase-input MuiInput-input"
+                disabled={false}
+                id="maxTime"
+                onAnimationStart={[Function]}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                required={false}
+                type="number"
+                value={30}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="MuiFormGroup-root MuiFormGroup-row"
+        style={
+          Object {
+            "justifyContent": "center",
+          }
+        }
+      >
+        <button
+          className="MuiButtonBase-root MuiButton-root MuiButton-contained makeStyles-button-2 MuiButton-containedPrimary"
+          disabled={false}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onDragLeave={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseLeave={[Function]}
+          onMouseUp={[Function]}
+          onTouchEnd={[Function]}
+          onTouchMove={[Function]}
+          onTouchStart={[Function]}
+          tabIndex={0}
+          type="submit"
+        >
+          <span
+            className="MuiButton-label"
+          >
+            Start
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;
