@@ -169,7 +169,9 @@ func GetSensorValues(resp http.ResponseWriter, req *http.Request, params routing
 			FROM "sensor_values" 
 			WHERE 
 				"name" = $1 AND
-				"channel_id" = $2
+				"channel_id" = $2 AND
+				"value" != ''
+			ORDER BY "entry_id" DESC
 			LIMIT $3 OFFSET $4`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{name, channel_id, limit, offset})
