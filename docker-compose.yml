@@ -23,7 +23,7 @@ services:
         - sensordata
       environment:
         SERVING_ADDR: ${SERVING_ADDR:-:8080}
-        SERVING_ADDR: ${DATA_EXTRACTION_INTERVAL:-60} # in minutes
+        DATA_EXTRACTION_INTERVAL: ${DATA_EXTRACTION_INTERVAL:-60} # in minutes
         POSTGRES_DB: ${POSTGRES_DB:-waziup}
         POSTGRES_USER: ${POSTGRES_USER:-root}
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
@@ -66,7 +66,7 @@ services:
     #   timeout: 45s
     #   interval: 10s
     #   retries: 10
-    # restart: always
+    restart: always
 
   #----------------#
 
@@ -89,60 +89,6 @@ services:
     restart: unless-stopped
 
   #----------------#
-
-  # influxdb:
-  #   container_name: influxdb
-  #   image: influxdb:alpine
-  #   ports:
-  #     - '8086:8086'
-  #     - '2003:2003'   # Graphite
-  #   volumes:
-  #     - influxdb-storage:/var/lib/influxdb
-  #   #   - influxdb-config.json:/influxdb-conf/config.json
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       max-size: "200k"
-  #       max-file: "10"
-  #   environment:
-  #     - INFLUXDB_DB=thingspeak
-  #     - INFLUXDB_HTTP_AUTH_ENABLED=true
-  #     - DOCKER_INFLUXDB_INIT_MODE=setup
-  #     - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_USERNAME}
-  #     - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
-  #     - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_ORG}
-  #     - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_BUCKET}
-  #     - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_TOKEN}
-
-  #   #------------#
-
-
-#   chronograf:
-#     image: chronograf:latest
-#     ports:
-#       - '127.0.0.1:8888:8888'
-#     volumes:
-#       - chronograf-storage:/var/lib/chronograf
-#     depends_on:
-#       - influxdb
-#     environment:
-#       - INFLUXDB_URL=http://influxdb:8086
-#       - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
-#       - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
-
-#   grafana:
-#     image: grafana/grafana:latest
-#     ports:
-#       - '3000:3000'
-#     volumes:
-#       - grafana-storage:/var/lib/grafana
-#       - ./grafana-provisioning/:/etc/grafana/provisioning
-#     depends_on:
-#       - influxdb
-#     environment:
-#       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
-#       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
-
 
 # volumes:
 #   influxdb-storage:
