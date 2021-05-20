@@ -1,6 +1,6 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import Main from '../../../pages/Main/Main';
+import Main from '../../../pages/Main';
 
 
 describe("Main page", () => {

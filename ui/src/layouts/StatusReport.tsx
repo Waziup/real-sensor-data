@@ -4,13 +4,18 @@ import * as API from "../api";
 import RouterIcon from '@material-ui/icons/Router';
 
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
-import CircularProgressWithLabel from './CircularProgressWithLabel';
+import CircularProgressWithLabel from '../components/CircularProgressWithLabel';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
 
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 
-TimeAgo.addDefaultLocale(en)
+try {
+    TimeAgo.addDefaultLocale(en)
+} catch (e) {
+    // console.warn(e) 
+}
+
 
 /**---------------- */
 

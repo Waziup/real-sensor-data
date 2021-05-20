@@ -106,13 +106,13 @@ export type DataTableRow = {
     id?: number;
     title?: string;
     subtitle?: string;
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>, id: number) => void;
 }
 
 interface Props {
     pagination: API.Pagination;
     rows: DataTableRow[];
     onChangePage: (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => void;
+    onRowClick?: (event: React.MouseEvent<any>, index: number) => void;
 }
 
 /**-------- */
@@ -124,8 +124,8 @@ export default function DataTable(props: Props) {
             <Table className={classes.table} aria-label="custom pagination table">
                 <TableBody>
                     {props?.rows && props?.rows?.map((row, index) => (
-                        <TableRow key={index} className={classes.tableRow}>
-                            <TableCell component="th" scope="row">
+                        <TableRow key={index} className={classes.tableRow} onClick={(e) => props.onRowClick ? props.onRowClick(e, index) : null}>
+                            <TableCell component="th" scope="row" >
                                 {row?.title + "  - "}
                                 <span style={{ color: "#888" }}>
                                     {row?.subtitle}

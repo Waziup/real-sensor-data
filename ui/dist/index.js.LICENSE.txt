@@ -1,9 +1,29 @@
+/*!
+ * ApexCharts v3.26.3
+ * (c) 2018-2021 Juned Chhipa
+ * Released under the MIT License.
+ */
+
+/*! svg.draggable.js - v2.2.2 - 2019-01-08
+* https://github.com/svgdotjs/svg.draggable.js
+* Copyright (c) 2019 Wout Fierens; Licensed MIT */
+
+/*! svg.filter.js - v2.0.2 - 2016-02-24
+* https://github.com/wout/svg.filter.js
+* Copyright (c) 2016 Wout Fierens; Licensed MIT */
+
 /**
  * A better abstraction over CSS.
  *
  * @copyright Oleg Isonen (Slobodskoi) / Isonen 2014-present
  * @website https://github.com/cssinjs/jss
  * @license MIT
+ */
+
+/** @license Material-UI v4.11.2
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
  */
 
 /** @license Material-UI v4.11.4

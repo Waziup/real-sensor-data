@@ -3,8 +3,10 @@ import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 
 // import ontologies from "../../data/ontologies/ontologies.json";
-import StatusReport from '../../components/StatusReport';
-import SensorSearch from '../../components/SensorSearch';
+import StatusReport from '../layouts/StatusReport';
+import SensorSearch from '../layouts/SensorSearch';
+import Sensor from '../layouts/Sensor';
+import BackToTop from '../components/BackToTop';
 
 /*---------------------*/
 
@@ -50,9 +52,34 @@ export default function Main() {
 
   /**------------- */
 
+  useEffect(() => {
+    const tmpData = { id: 284943, title: "Air Temp (F)", subtitle: "Daniels Island Tide and Meteorological Station" };
+    handleSearchResultClick(tmpData);
+    // return () => {}
+  }, [])
+
+  /**------------- */
+
   const [statsDlgOpen, setStatisticsDialogue] = useState(false)
   const handleStatisticsOpen = () => { setStatisticsDialogue(true) }
   const handleStatisticsClose = () => { setStatisticsDialogue(false) }
+
+  /**------------- */
+
+
+
+  /**------------- */
+
+  const [sensorDlgOpen, setSensorDlgOpen] = useState(false)
+  const [sensorProps, setSensorProps] = useState(null)
+  const handleSearchResultClick = (dataRow: any) => {
+    setSensorDlgOpen(true)
+    setSensorProps({
+      channel_id: dataRow.id,
+      name: dataRow.title,
+    })
+  }
+  const handleSensorDlgClose = () => { setSensorDlgOpen(false) }
 
   /**------------- */
 
@@ -80,20 +107,45 @@ export default function Main() {
         </Toolbar>
       </AppBar>
 
-      <SensorSearch />
+      {/* ------------------------- */}
 
+      <Toolbar id="back-to-top-anchor" />
+
+      <SensorSearch onSearchResultClick={handleSearchResultClick} />
+
+      <BackToTop topAnchorId="back-to-top-anchor" />
+
+      {/* ------------------------- */}
+
+      <Dialog
+        open={sensorDlgOpen}
+        onClose={handleSensorDlgClose}
+        aria-labelledby="sensor-dialog-title"
+        aria-describedby="sensor-dialog-description"
+        fullScreen={true}
+      >
+        <DialogTitle id="sensor-dialog-title">{"Sensor Details"}</DialogTitle>
+        <DialogContent>
+          {sensorDlgOpen && <Sensor {...sensorProps} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSensorDlgClose} color="primary" autoFocus>
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ------------------------- */}
 
       <Dialog
         open={statsDlgOpen}
         onClose={handleStatisticsClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        aria-labelledby="statistics-dialog-title"
+        aria-describedby="statistics-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Data Collection Statistics"}</DialogTitle>
+        <DialogTitle id="statistics-dialog-title">{"Data Collection Statistics"}</DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            <StatusReport />
-          </DialogContentText>
+          <StatusReport />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleStatisticsClose} color="primary" autoFocus>

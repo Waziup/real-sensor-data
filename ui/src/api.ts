@@ -74,6 +74,14 @@ export async function getChannels(page: number): Promise<ChannelsData> {
 
 /*--------------*/
 
+export async function getChannel(id: number): Promise<ChannelRow> {
+  var resp = await fetch(`${LOCAL_API_URL}channels/${id.toString()}`);
+  if (!resp.ok) await failResp(resp);
+  return await resp.json();
+}
+
+/*--------------*/
+
 export type SensorRow = {
   channel_id: number;
   channel_name: string;
@@ -92,8 +100,36 @@ export async function searchSensors(
   if (!page) {
     page = 1;
   }
+  query = encodeURI(query);
   var resp = await fetch(
     `${LOCAL_API_URL}sensors/search/${query}?page=${page.toString()}`
+  );
+  if (!resp.ok) await failResp(resp);
+  return await resp.json();
+}
+
+/*--------------*/
+
+export type SensorValueRow = {
+  channel_id: number;
+  created_at: Date;
+  entry_id: number;
+  name: string;
+  value: string;
+};
+
+export type SensorValues = {
+  pagination: Pagination;
+  rows: SensorValueRow[];
+};
+
+export async function getSensorValues(
+  name: string,
+  channel_id: number
+): Promise<SensorValues> {
+  name = encodeURI(name);
+  var resp = await fetch(
+    `${LOCAL_API_URL}channels/${channel_id.toString()}/sensors/${name}/values`
   );
   if (!resp.ok) await failResp(resp);
   return await resp.json();
