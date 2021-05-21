@@ -1,14 +1,16 @@
-import { CircularProgress, Grid, makeStyles, Paper, Table, TableBody, TableCell, TableContainer, TableRow } from '@material-ui/core';
+import { AppBar, Box, CircularProgress, Grid, makeStyles, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableRow, Tabs } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import * as API from "../api";
 import Chart, { TimeSeriesDataType } from '../components/Chart';
+import InfoIcon from '@material-ui/icons/Info';
+import ShowChartIcon from '@material-ui/icons/ShowChart';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 /**---------------- */
 
-
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
-
+let timeAgo: TimeAgo
 try {
     TimeAgo.addDefaultLocale(en)
 } catch (e) { //console.warn(e) 
@@ -22,6 +24,15 @@ const useStyles = makeStyles((theme) => ({
         width: '100%',
         backgroundColor: theme.palette.background.paper,
         // color: theme.palette.text.primary,
+        flexGrow: 1,
+    },
+    tabs: {
+        width: '100%',
+        backgroundColor: theme.palette.background.paper,
+    },
+    tabPanels: {
+        border: '1px solid #EEE',
+        borderRadius: 5
     },
     text: {
         color: "blue",
@@ -46,11 +57,13 @@ interface Props {
 export default function Sensor(props: Props) {
 
     const classes = useStyles();
-    const timeAgo = new TimeAgo('en-US')
+    // const theme = useTheme();
+
 
     /**------------------ */
 
     useEffect(() => {
+        timeAgo = new TimeAgo('en-US')
         loadChannel();
         loadSensorValues();
         // return () => {}
@@ -115,13 +128,18 @@ export default function Sensor(props: Props) {
 
         tableInfo.push({ title: "Total value entries", value: totalEntries.toLocaleString() })
 
-
-        // `https://www.google.com/maps/search/52.759723,-1.236892`
     }
 
     /**------------------ */
 
-    if (chartValues === null) {
+    const [tabValue, setTabValue] = useState(0)
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setTabValue(newValue);
+    };
+
+    /**------------------ */
+
+    if (tableInfo === null) {
         return (<Grid container justify="center">
             <CircularProgress disableShrink />
         </Grid>)
@@ -130,23 +148,86 @@ export default function Sensor(props: Props) {
     /**------------------ */
 
     return (
-        <div>
-            <TableContainer component={Paper} className={classes.table}>
-                <Table className={classes.table} aria-label="simple table">
-                    <TableBody>
-                        {tableInfo && tableInfo.map((row: any, index: number) =>
-                            <TableRow key={index}>
-                                {row.title &&
-                                    <TableCell component="td" width={250} scope="row">{row.title}</TableCell>
-                                }
-                                <TableCell align="left" colSpan={row.title ? 1 : 2} style={{ color: "#06A" }}>{row.value}</TableCell>
-                            </TableRow>
-                        )}
-
-                    </TableBody>
-                </Table>
-            </TableContainer>
-            {chartValues && <Chart data={chartValues} />}
+        <div className={classes.root}>
+            <AppBar position="static" color="default">
+                <Tabs
+                    value={tabValue}
+                    onChange={handleTabChange}
+                    variant="fullWidth" // | scrollable
+                    // scrollButtons="on"
+                    indicatorColor="primary"
+                    textColor="primary"
+                    aria-label="sensor details tabs"
+                >
+                    <Tab label="Details" icon={<InfoIcon />} {...a11yProps(0)} />
+                    <Tab label="Chart" icon={<ShowChartIcon />} {...a11yProps(1)} />
+                    <Tab label="Push Settings" icon={<CloudUploadIcon />} {...a11yProps(2)} />
+                </Tabs>
+            </AppBar>
+            <Box className={classes.tabPanels}>
+                <TabPanel value={tabValue} index={0} >
+                    <TableContainer >
+                        <Table className={classes.table} aria-label="simple table">
+                            <TableBody>
+                                {tableInfo && tableInfo.map((row: any, index: number) =>
+                                    <TableRow key={index}>{row.title != "" &&
+                                        <TableCell component="td" width={250} scope="row">{row.title}</TableCell>
+                                    }
+                                        <TableCell align="left" colSpan={row.title ? 1 : 2} style={{ color: "#06A" }}>
+                                            {row.value}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </TabPanel>
+                <TabPanel value={tabValue} index={1}>
+                    {chartValues && <Chart data={chartValues} />}
+                </TabPanel>
+                <TabPanel value={tabValue} index={2}>
+                    {"Push Settings"}
+                </TabPanel>
+            </Box>
         </div>
     )
 }
+
+/**----------------- */
+
+interface TabPanelProps {
+    children?: React.ReactNode;
+    index: any;
+    value: any;
+}
+
+function TabPanel(props: TabPanelProps) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`tabpanel-${index}`}
+            aria-labelledby={`tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box p={3}>
+                    {children}
+                </Box>
+            )}
+        </div>
+    );
+}
+
+/**----------------- */
+
+function a11yProps(index: any) {
+    return {
+        id: `tab-${index}`,
+        'aria-controls': `tabpanel-${index}`,
+    };
+}
+
+/**----------------- */
