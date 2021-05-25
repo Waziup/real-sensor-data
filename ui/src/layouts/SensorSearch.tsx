@@ -44,7 +44,7 @@ export default function SensorSearch(props: Props) {
                 if (res.rows) {
                     for (let row of res.rows) {
                         tableRows.push({
-                            id: row.channel_id,
+                            id: row.id,
                             title: row.name,
                             subtitle: row.channel_name,
                         });
@@ -67,7 +67,7 @@ export default function SensorSearch(props: Props) {
 
     const handleChangePage = (e: React.MouseEvent<HTMLButtonElement>, page: number) => {
         e.preventDefault();
-        doSearch(searchQuery, page + 1); // We need to increase it by one as the TablePagintation component starts with zero
+        doSearch(searchQuery, page + 1); // We need to increase it by one as the TablePagination component starts with zero
     }
 
     /**------------ */

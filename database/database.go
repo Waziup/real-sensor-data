@@ -33,7 +33,7 @@ type QueryParams []interface{}
 
 /*-----------------------*/
 
-func New(DatabaseType DBType) *Database {
+func New(DatabaseType DBType, params ...string) *Database {
 	var newDB Database
 
 	newDB.Type = DatabaseType
@@ -42,7 +42,10 @@ func New(DatabaseType DBType) *Database {
 	case InfluxDB:
 		newDB.InfluxClient = NewInfluxDB()
 	case Postgres:
-		newDB.SQLConn = NewPostgresDB()
+		if len(params) == 0 {
+			return nil
+		}
+		newDB.SQLConn = NewPostgresDB(params[0])
 		newDB.PostgresInit()
 	}
 
@@ -88,6 +91,20 @@ func (db *Database) Update(table string, fields RowType, conditions RowType) (Ex
 		return ExecResult{}, nil // Not implemented
 	case Postgres:
 		return db.PostgresUpdate(table, fields, conditions)
+	}
+
+	return ExecResult{}, nil //TODO: provide a useful error here
+}
+
+/*-----------------------*/
+
+func (db *Database) Delete(table string, conditions RowType) (ExecResult, error) {
+
+	switch db.Type {
+	case InfluxDB:
+		return ExecResult{}, nil // Not implemented
+	case Postgres:
+		return db.PostgresDelete(table, conditions)
 	}
 
 	return ExecResult{}, nil //TODO: provide a useful error here

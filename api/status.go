@@ -3,9 +3,9 @@ package api
 import (
 	"log"
 	"net/http"
-	"real-sensor-data/database"
-	"real-sensor-data/global"
-	"real-sensor-data/tools"
+	"sensor-data-simulator/database"
+	"sensor-data-simulator/global"
+	"sensor-data-simulator/tools"
 
 	routing "github.com/julienschmidt/httprouter"
 )
@@ -44,7 +44,7 @@ func GetDataCollectionStatistics(resp http.ResponseWriter, req *http.Request, pa
 
 	totalSensors := int64(0)
 	{
-		SQL := `SELECT COUNT(*) AS "total" FROM (SELECT DISTINCT "name", "channel_id" FROM "sensor_values") AS "tmp"`
+		SQL := `SELECT COUNT(*) AS "total" FROM "sensors"`
 		rows, err := global.DB.Query(SQL, database.QueryParams{})
 		if err != nil {
 			log.Printf("Error in db query: %v", err)

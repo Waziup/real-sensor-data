@@ -1,10 +1,13 @@
-import { AppBar, Box, CircularProgress, Grid, makeStyles, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableRow, Tabs } from '@material-ui/core';
+import { AppBar, Box, CircularProgress, Divider, Grid, makeStyles, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableRow, Tabs } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
-import * as API from "../api";
-import Chart, { TimeSeriesDataType } from '../components/Chart';
 import InfoIcon from '@material-ui/icons/Info';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import Alert from '@material-ui/lab/Alert';
+
+import * as API from "../api";
+import Chart, { TimeSeriesDataType } from '../components/Chart';
+import SensorPushSettings from './SensorPushSettings'
 
 /**---------------- */
 
@@ -48,8 +51,7 @@ const useStyles = makeStyles((theme) => ({
 /**---------------- */
 
 interface Props {
-    channel_id: number;
-    name: string;
+    id: number;
 }
 
 /**---------------- */
@@ -64,6 +66,7 @@ export default function Sensor(props: Props) {
 
     useEffect(() => {
         timeAgo = new TimeAgo('en-US')
+
         loadChannel();
         loadSensorValues();
         // return () => {}
@@ -71,21 +74,36 @@ export default function Sensor(props: Props) {
 
     /**------------------ */
 
-    const [channel, setChannel] = useState(null as API.ChannelRow)
+    const [err, setErr] = useState<string>(null)
+    const [channel, setChannel] = useState<API.ChannelRow>(null)
+    const [sensorName, setSensorName] = useState<string>(null)
     const loadChannel = () => {
 
-        API.getChannel(props.channel_id).then(
-            res => { setChannel(res); },
-            err => { console.error(err); }
+        API.getSensor(props.id).then(
+            res => {
+                setSensorName(res.name);
+                API.getChannel(res.channel_id).then(
+                    res => { setChannel(res); },
+                    err => { console.error(err); }
+                )
+            },
+            err => {
+                setErr(err);
+                console.error(err);
+            }
         )
     }
 
     /**------------------ */
 
+
+
+    /**------------------ */
+
     const [totalEntries, setTotalEntries] = useState(0)
-    const [chartValues, setSensorValues] = useState(null as TimeSeriesDataType[])
+    const [chartValues, setSensorValues] = useState<TimeSeriesDataType[]>(null)
     const loadSensorValues = () => {
-        API.getSensorValues(props.name, props.channel_id).then(
+        API.getSensorValues(props.id, 1).then(
             res => {
                 setTotalEntries(res.pagination.total_entries);
 
@@ -111,7 +129,7 @@ export default function Sensor(props: Props) {
     if (channel !== null && chartValues !== null) {
 
         tableInfo = [
-            { title: "Sensor name", value: props.name },
+            { title: "Sensor name", value: sensorName },
             { title: "Device name", value: channel.name },
             { title: "", value: channel.description },
             { title: "Created Time", value: new Date(channel.created_at).toLocaleString() },
@@ -132,12 +150,19 @@ export default function Sensor(props: Props) {
 
     /**------------------ */
 
-    const [tabValue, setTabValue] = useState(0)
+    const [tabValue, setTabValue] = useState(2)
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setTabValue(newValue);
     };
 
     /**------------------ */
+
+    if (err) {
+        return <Alert severity="error">{err}</Alert>
+    }
+
+    /**------------------ */
+
 
     if (tableInfo === null) {
         return (<Grid container justify="center">
@@ -186,7 +211,14 @@ export default function Sensor(props: Props) {
                     {chartValues && <Chart data={chartValues} />}
                 </TabPanel>
                 <TabPanel value={tabValue} index={2}>
-                    {"Push Settings"}
+                    <Grid container spacing={3}>
+                        <Grid item xs={3}>Source Sensor</Grid>
+                        <Grid item xs={9}>{channel?.name && sensorName ? (channel?.name + " - " + sensorName) : "..."}</Grid>
+                    </Grid>
+                    <br />
+                    <Divider />
+                    <br />
+                    <SensorPushSettings sensorId={props.id} />
                 </TabPanel>
             </Box>
         </div>

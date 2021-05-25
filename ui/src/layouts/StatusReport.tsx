@@ -6,6 +6,7 @@ import RouterIcon from '@material-ui/icons/Router';
 import WbIncandescentIcon from '@material-ui/icons/WbIncandescent';
 import CircularProgressWithLabel from '../components/CircularProgressWithLabel';
 import WatchLaterIcon from '@material-ui/icons/WatchLater';
+import TimelineIcon from '@material-ui/icons/Timeline';
 
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
@@ -22,7 +23,7 @@ try {
 const useStyles = makeStyles((theme) => ({
     root: {
         width: '100%',
-        maxWidth: 450,
+        maxWidth: 900,
         backgroundColor: theme.palette.background.paper,
         // color: theme.palette.text.primary,
     },
@@ -30,8 +31,7 @@ const useStyles = makeStyles((theme) => ({
         color: "blue",
     },
     table: {
-        width: '100%',
-        maxWidth: 500,
+        width: '700px',
     },
     tableHead: {
         fontWeight: "bold"
@@ -115,12 +115,12 @@ export default function StatusReport() {
     /*------------*/
 
     return (
-        <TableContainer component={Paper} className={classes.table}>
+        <TableContainer component={Paper} className={classes.root}>
             <Table className={classes.table} aria-label="simple table">
                 <TableHead >
                     <TableRow>
-                        <TableCell className={classes.tableHead} align="center">Title</TableCell>
-                        <TableCell className={classes.tableHead} align="right">New data</TableCell>
+                        <TableCell className={classes.tableHead} align="center"></TableCell>
+                        <TableCell className={classes.tableHead} align="right">New</TableCell>
                         <TableCell className={classes.tableHead} align="right">Total</TableCell>
                     </TableRow>
                 </TableHead>
@@ -140,7 +140,20 @@ export default function StatusReport() {
 
                     <TableRow key={2}>
                         <TableCell component="th" scope="row">
-                            <WbIncandescentIcon /> {"Sensor Values"}
+                            <WbIncandescentIcon /> {"Sensors"}
+                        </TableCell>
+                        <TableCell align="right" style={{ color: "blue" }}>
+                            {dataCollectionState?.SensorsRunning && <CircularProgressWithLabel size="55px" value={dataCollectionState?.SensorsProgress} />}
+                            {!dataCollectionState?.SensorsRunning && <span color="primary" title={dataCollectionState?.NewExtractedSensors?.toLocaleString()}>{niceNum(dataCollectionState?.NewExtractedSensors)}</span>}
+                        </TableCell>
+                        <TableCell align="right">
+                            {dataStatistics?.totalSensors && <span title={dataStatistics?.totalSensors?.toLocaleString()}>{niceNum(dataStatistics?.totalSensors)}</span>}
+                        </TableCell>
+                    </TableRow>
+
+                    <TableRow key={3}>
+                        <TableCell component="th" scope="row">
+                            <TimelineIcon /> {"Sensor Values"}
                         </TableCell>
                         <TableCell align="right" style={{ color: "blue" }}>
                             {dataCollectionState?.SensorsRunning && <CircularProgressWithLabel size="55px" value={dataCollectionState?.SensorsProgress} />}
@@ -151,7 +164,7 @@ export default function StatusReport() {
                         </TableCell>
                     </TableRow>
 
-                    <TableRow key={3}>
+                    <TableRow key={4}>
                         <TableCell component="th" scope="row">
                             <WatchLaterIcon /> {"Last Extraction"}
                         </TableCell>

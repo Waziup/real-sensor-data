@@ -29,6 +29,7 @@ services:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
         POSTGRES_PORT: ${POSTGRES_PORT:-5432}
         POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+        WAZIUP_API_PATH: ${SERVING_ADDR:-https://api.waziup.io/api/v2/}
         # - INFLUXDB_ADDR=http://influxdb:8086
         # - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
         # - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}

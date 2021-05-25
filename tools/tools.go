@@ -1,10 +1,13 @@
 package tools
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"real-sensor-data/global"
+	"sensor-data-simulator/global"
 	"strconv"
 )
 
@@ -45,6 +48,26 @@ func GetLimitOffset(req *http.Request) (int, int, int) {
 	offset := (page - 1) * limit
 
 	return limit, offset, page
+}
+
+/*------------------------------*/
+
+type ClosingBuffer struct {
+	*bytes.Buffer
+}
+
+func (cb *ClosingBuffer) Close() error {
+	return nil
+}
+
+func ReadAll(rc io.ReadCloser) ([]byte, error) {
+	defer rc.Close()
+
+	if cb, ok := rc.(*ClosingBuffer); ok {
+		return cb.Bytes(), nil
+	}
+
+	return ioutil.ReadAll(rc)
 }
 
 /*------------------------------*/

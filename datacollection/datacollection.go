@@ -7,10 +7,9 @@ import (
 	"log"
 	"math"
 	"net/http"
-	"os"
-	"real-sensor-data/database"
-	"real-sensor-data/global"
 	"runtime"
+	"sensor-data-simulator/database"
+	"sensor-data-simulator/global"
 	"strconv"
 	"strings"
 	"time"
@@ -39,7 +38,7 @@ func Init() {
 
 			dataExtractionInterval := 60
 
-			if val := os.Getenv("DATA_EXTRACTION_INTERVAL"); val != "" {
+			if val := global.ENV.DATA_EXTRACTION_INTERVAL; val != "" {
 				dataExtractionInterval, _ = strconv.Atoi(val)
 				if dataExtractionInterval <= 0 {
 					dataExtractionInterval = 60
@@ -183,7 +182,7 @@ func processChannelSensors(channel database.RowType) {
 	}
 
 	if err := json.Unmarshal(content, &sensorFeedJSON); err != nil {
-		log.Printf("\nChannel: %v, Err: %v", channel["id"], err)
+		// log.Printf("\nChannel: %v, Err: %v", channel["id"], err)
 		return
 	}
 
@@ -196,6 +195,7 @@ func processChannelSensors(channel database.RowType) {
 	fieldNames := []string{ch.Field1, ch.Field2, ch.Field3, ch.Field4, ch.Field5, ch.Field6, ch.Field7, ch.Field8}
 
 	dataPointsCounts := int64(0)
+	extractedSensorsCount := int64(0)
 	for _, rec := range sensorFeedJSON.Feeds {
 
 		// ideally a combination of fields (e.g. name, channel_id, ...) is required, but since the entry_id is unique in thingspeak, it is sufficient
@@ -212,18 +212,47 @@ func processChannelSensors(channel database.RowType) {
 				continue
 			}
 
+			// Process the sensor details:
+
+			sensorId := int64(0)
+			sensorRow := database.RowType{
+				"channel_id": sensorFeedJSON.Channel.Id,
+				"name":       fieldNames[i],
+			}
+
+			rows, _ := global.DB.Load("sensors", sensorRow)
+			if rows != nil && len(rows) > 0 {
+				sensorId = rows[0]["id"].(int64)
+			} else {
+
+				insRes, err := global.DB.Insert("sensors", sensorRow)
+				if err != nil {
+					if !strings.Contains(err.Error(), "duplicate key") {
+						log.Printf("\nError in sensor insertion: %v \nRow: \n%v", err, sensorRow)
+					}
+				}
+				sensorId = insRes.LastInsertId
+				extractedSensorsCount += insRes.RowsAffected
+			}
+
+			if sensorId == 0 {
+				log.Printf("\nError: sensor id (LastInsertId) is zero! \nRow: \n%v", sensorRow)
+				continue
+			}
+
+			/*------------*/
+
 			row := database.RowType{
 				"entry_id":   rec.EntryId,
-				"channel_id": sensorFeedJSON.Channel.Id,
 				"created_at": rec.CreatedAt,
-				"name":       fieldNames[i],
 				"value":      fieldValues[i],
+				"sensor_id":  sensorId,
 			}
 			insRes, err := global.DB.Insert("sensor_values", row)
 			if err != nil {
 				// Let's ignore duplicate key as some user's have used same sensor name twice or more
 				if !strings.Contains(err.Error(), "duplicate key") {
-					log.Printf("\nError in data insertion: %v", err)
+					log.Printf("\nError in sensor_value insertion: %v", err)
 				}
 			}
 
@@ -240,10 +269,9 @@ func processChannelSensors(channel database.RowType) {
 		global.DataCollectorProgress.NewExtractedSensorValues += dataPointsCounts
 	}
 
-	// fmt.Printf("\tChannel %v \tDone [new values: %d ]\n", channel["id"], dataPointsCounts)
-	// totalDataPointsCounts += dataPointsCounts
-
-	// fmt.Printf("Page %d done\n", page)
+	if extractedSensorsCount > 0 {
+		global.DataCollectorProgress.NewExtractedSensors += extractedSensorsCount
+	}
 
 }
 

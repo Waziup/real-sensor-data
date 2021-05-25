@@ -4,9 +4,9 @@ import (
 	"log"
 	"math"
 	"net/http"
-	"real-sensor-data/database"
-	"real-sensor-data/global"
-	"real-sensor-data/tools"
+	"sensor-data-simulator/database"
+	"sensor-data-simulator/global"
+	"sensor-data-simulator/tools"
 	"strconv"
 
 	routing "github.com/julienschmidt/httprouter"
@@ -59,13 +59,13 @@ func GetChannels(resp http.ResponseWriter, req *http.Request, params routing.Par
 /*-------------*/
 
 /*
-* This function implements GET /channels/:channel
+* This function implements GET /channels/:channel_id
  */
 func GetChannel(resp http.ResponseWriter, req *http.Request, params routing.Params) {
 
-	channel := params.ByName("channel")
+	channelIdStr := params.ByName("channel_id")
 
-	channel_id, err := strconv.Atoi(channel)
+	channel_id, err := strconv.Atoi(channelIdStr)
 	if err != nil {
 		channel_id = 0
 	}
@@ -89,13 +89,13 @@ func GetChannel(resp http.ResponseWriter, req *http.Request, params routing.Para
 /*-------------*/
 
 /*
-* This function implements GET /channels/:channel/sensors
+* This function implements GET /channels/:channel_id/sensors
  */
 func GetChannelSensors(resp http.ResponseWriter, req *http.Request, params routing.Params) {
 
-	channel := params.ByName("channel")
+	channelIdStr := params.ByName("channel_id")
 
-	channel_id, err := strconv.Atoi(channel)
+	channel_id, err := strconv.Atoi(channelIdStr)
 	if err != nil {
 		channel_id = 0
 	}
@@ -119,7 +119,7 @@ func GetChannelSensors(resp http.ResponseWriter, req *http.Request, params routi
 
 	totalRows := int64(0)
 	{
-		SQL := `SELECT COUNT(*) AS "total" FROM (SELECT DISTINCT "name", "channel_id" FROM "sensor_values" WHERE "channel_id" = $1) AS "tmp"`
+		SQL := `SELECT COUNT(*) AS "total" FROM "sensors" WHERE "channel_id" = $1`
 		rows, err := global.DB.Query(SQL, database.QueryParams{channel_id})
 		if err != nil {
 			log.Printf("Error in db query: %v", err)
@@ -138,9 +138,8 @@ func GetChannelSensors(resp http.ResponseWriter, req *http.Request, params routi
 
 	/*------*/
 
-	SQL = `SELECT 
-				DISTINCT "name", "channel_id" 
-			FROM "sensor_values" 
+	SQL = `SELECT "id", "name"
+			FROM "sensors" 
 			WHERE
 				"channel_id" = $1
 			LIMIT $2 OFFSET $3`
