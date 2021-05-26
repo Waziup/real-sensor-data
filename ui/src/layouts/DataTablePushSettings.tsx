@@ -148,10 +148,14 @@ interface Props {
 export default function DataTablePushSettings(props: Props) {
     const classes = useStyles2();
 
+    var loadTimeout: NodeJS.Timeout = null
     useEffect(() => {
         timeAgo = new TimeAgo('en-US');
         loadPushSettings(1);
-        // return () => {}
+        return () => {
+            clearTimeout(loadTimeout);
+            loadTimeout = null;
+        }
     }, [])
 
     /**-------------- */
@@ -193,6 +197,7 @@ export default function DataTablePushSettings(props: Props) {
         API.getPushSettings(props.sensorId, page).then(
             res => {
                 setPushSettingsList(res);
+                loadTimeout = setTimeout(() => { loadPushSettings(page); }, 60 * 1000); // Refresh the table every minute
             },
             err => {
                 console.error(err);
