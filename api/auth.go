@@ -62,7 +62,7 @@ func PostAuth(resp http.ResponseWriter, req *http.Request, params routing.Params
 
 	//Login success.
 
-	tokenHash, err := generateTokenHash(token)
+	tokenHash, err := GenerateTokenHash(token)
 	if err != nil {
 		log.Printf("[ERR  ] PostAuth: %s", err.Error())
 		http.Error(resp, "Something went wrong!", http.StatusInternalServerError)
@@ -72,7 +72,7 @@ func PostAuth(resp http.ResponseWriter, req *http.Request, params routing.Params
 	/*---------*/
 
 	// Save the user creds. in the DB
-	err = saveUserInfo(User{
+	err = SaveUserInfo(User{
 		Username:  inputUser.Username,
 		Password:  inputUser.Password,
 		Token:     token,
@@ -158,9 +158,9 @@ func CheckUserCredentials(username string, password string) (string, error) {
 
 // This function receives an authorized user info, stores it in the database
 
-func saveUserInfo(user User) error {
+func SaveUserInfo(user User) error {
 
-	existingUser, err := getUserByUsername(user.Username)
+	existingUser, err := GetUserByUsername(user.Username)
 	if err != nil {
 		// The user not found, so let's add it
 		row := database.RowType{
@@ -227,7 +227,7 @@ func getAuthorizedUserID(resp http.ResponseWriter, req *http.Request) (int64, er
 		return 0, fmt.Errorf("not authorized")
 	}
 
-	userId, err := getUserIdByTokenHash(reqTokenHash)
+	userId, err := GetUserIdByTokenHash(reqTokenHash)
 	if err != nil {
 		return 0, err
 	}
@@ -245,7 +245,7 @@ func getAuthorizedUserID(resp http.ResponseWriter, req *http.Request) (int64, er
 
 /*---------------------*/
 
-func getUserIdByTokenHash(tokenHash string) (int64, error) {
+func GetUserIdByTokenHash(tokenHash string) (int64, error) {
 
 	SQL := `SELECT "id" FROM "users" WHERE "tokenHash" = $1`
 
@@ -264,7 +264,7 @@ func getUserIdByTokenHash(tokenHash string) (int64, error) {
 
 /*---------------------*/
 
-func getUserById(userId int64) (User, error) {
+func GetUserById(userId int64) (User, error) {
 
 	var user User
 
@@ -291,7 +291,7 @@ func getUserById(userId int64) (User, error) {
 
 /*---------------------*/
 
-func getUserByUsername(username string) (User, error) {
+func GetUserByUsername(username string) (User, error) {
 
 	var user User
 
@@ -318,7 +318,7 @@ func getUserByUsername(username string) (User, error) {
 
 /*---------------------*/
 
-func generateTokenHash(token string) (string, error) {
+func GenerateTokenHash(token string) (string, error) {
 
 	hashed, err := bcrypt.GenerateFromPassword([]byte(token), bcrypt.DefaultCost)
 	if err != nil {

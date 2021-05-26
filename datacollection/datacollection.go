@@ -242,10 +242,13 @@ func processChannelSensors(channel database.RowType) {
 
 			/*------------*/
 
+			// Clean the garbage from the value
+			value := strings.Trim(fieldValues[i], " \n\t\r")
+
 			row := database.RowType{
 				"entry_id":   rec.EntryId,
 				"created_at": rec.CreatedAt,
-				"value":      fieldValues[i],
+				"value":      value,
 				"sensor_id":  sensorId,
 			}
 			insRes, err := global.DB.Insert("sensor_values", row)

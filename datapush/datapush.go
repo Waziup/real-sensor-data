@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sensor-data-simulator/api"
 	"sensor-data-simulator/database"
 	"sensor-data-simulator/global"
 	"strconv"
@@ -89,9 +90,27 @@ func handlePushInterval(intervalInMinutes int) {
 				sensorTimestamp = sourceSensorRow["created_at"].(time.Time)
 			}
 
-			err = PushDataToWaziup(pushRow["token"].(string), pushRow["target_device_id"].(string), pushRow["target_sensor_id"].(string), value, sensorTimestamp)
+			statusCode, err := PushDataToWaziup(pushRow["token"].(string), pushRow["target_device_id"].(string), pushRow["target_sensor_id"].(string), value, sensorTimestamp)
 			if err != nil {
-				continue
+				if statusCode == 403 { // The token is not valid anymore, let's refresh it
+					log.Printf("[PUSH ] The token is expired for `%v` Renewing token", pushRow["user_id"])
+					newToken, err := RefreshWaziupToken(pushRow["user_id"].(int64))
+					if err != nil {
+						log.Printf("[PUSH ] Error in token acquisition: %v", err)
+						continue
+					}
+
+					log.Printf("[PUSH ] New token acquired, pushing again...")
+
+					// Let's repeat the push process one more time
+					_, err = PushDataToWaziup(newToken, pushRow["target_device_id"].(string), pushRow["target_sensor_id"].(string), value, sensorTimestamp)
+					if err != nil {
+						continue
+					}
+
+				} else {
+					continue
+				}
 			}
 
 			/*---------*/
@@ -151,7 +170,7 @@ func GetTheNextValueToPush(sensorId int64, lastPushedEntryId int64) (database.Ro
 
 /*--------------*/
 
-func PushDataToWaziup(token string, deviceId string, sensorId string, value string, timestamp time.Time) error {
+func PushDataToWaziup(token string, deviceId string, sensorId string, value string, timestamp time.Time) (int, error) {
 
 	apiPath := fmt.Sprintf(global.ENV.WAZIUP_API_PATH+`devices/%s/sensors/%s/value`, deviceId, sensorId)
 
@@ -170,23 +189,49 @@ func PushDataToWaziup(token string, deviceId string, sensorId string, value stri
 	req, err := http.NewRequest("POST", apiPath, bytes.NewBuffer(postBody))
 	if err != nil {
 		log.Printf("[PUSH ] could not make the request: %v", err)
-		return err
+		return 0, err
 	}
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", token))
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		log.Printf("[PUSH ] did not receive a response from Waziup Server: %v", err)
-		return err
+		return 0, err
 	}
 
 	if resp.StatusCode != 204 {
 		err := fmt.Errorf("waziup api error (%v): %v ", resp.StatusCode, resp.Status)
 		log.Printf("[PUSH ] Waziup API Error: %v \nAPI path: %v", err, apiPath)
-		return err
+		return resp.StatusCode, err
 	}
 
-	return nil
+	return resp.StatusCode, nil
+}
+
+/*--------------*/
+
+func RefreshWaziupToken(userId int64) (string, error) {
+
+	user, err := api.GetUserById(userId)
+	if err != nil {
+		return "", err
+	}
+
+	newToken, err := api.CheckUserCredentials(user.Username, user.Password)
+	if err != nil {
+		return "", err
+	}
+
+	user.Token = newToken
+	user.TokenHash = ""
+
+	err = api.SaveUserInfo(user)
+	if err != nil {
+		return "", err
+	}
+
+	return user.Token, nil
 }
 
 /*--------------*/

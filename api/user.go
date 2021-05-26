@@ -38,7 +38,7 @@ func GetUserDevicesAndSensors(resp http.ResponseWriter, req *http.Request, param
 
 	/*------*/
 
-	user, err := getUserById(userId)
+	user, err := GetUserById(userId)
 	if err != nil {
 		http.Error(resp, "Something went wrong", http.StatusInternalServerError)
 		return
@@ -112,7 +112,7 @@ func GetUser(resp http.ResponseWriter, req *http.Request, params routing.Params)
 
 	/*------*/
 
-	user, err := getUserById(userId)
+	user, err := GetUserById(userId)
 	if err != nil {
 		http.Error(resp, "Something went wrong", http.StatusInternalServerError)
 		return
