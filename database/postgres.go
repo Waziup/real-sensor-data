@@ -321,6 +321,7 @@ func (db *Database) PostgresInit() error {
 
 		-- DROP TABLE public.push_settings;
 
+
 		CREATE TABLE public.push_settings
 		(
 			id bigint NOT NULL DEFAULT nextval('push_settings_id_seq'::regclass),
@@ -331,20 +332,30 @@ func (db *Database) PostgresInit() error {
 			active boolean,
 			last_pushed_entry_id bigint,
 			push_interval integer NOT NULL,
-			last_push_time date,
+			last_push_time timestamp without time zone,
 			CONSTRAINT push_settings_pkey PRIMARY KEY (id)
 		)
+
 
 		TABLESPACE pg_default;
 
 		ALTER TABLE public.push_settings
 			OWNER to root;
+		-- Index: active
 
 		-- DROP INDEX public.active;
 
 		CREATE INDEX active
 			ON public.push_settings USING btree
 			(active ASC NULLS LAST)
+			TABLESPACE pg_default;
+		-- Index: push_interval
+
+		-- DROP INDEX public.push_interval;
+
+		CREATE INDEX push_interval
+			ON public.push_settings USING btree
+			(push_interval ASC NULLS LAST)
 			TABLESPACE pg_default;
 		-- Index: user_sensor
 
