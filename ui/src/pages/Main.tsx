@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AppBar, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, makeStyles, Toolbar, Typography } from '@material-ui/core';
 import EqualizerIcon from '@material-ui/icons/Equalizer';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 
 // import ontologies from "../../data/ontologies/ontologies.json";
 import StatusReport from '../layouts/StatusReport';
 import SensorSearch from '../layouts/SensorSearch';
+import MyPushSensors from '../layouts/MyPushSensors';
 import Sensor from '../layouts/Sensor';
 import LoginForm from '../layouts/LoginForm';
 import UserProfile from '../layouts/UserProfile';
@@ -114,6 +116,11 @@ export default function Main() {
 
   /**------------- */
 
+  const [dlgMyPushSensors, setDlgMyPushSensors] = useState(false)
+  const showMyPushSensors = (event: any) => { setDlgMyPushSensors(true) }
+  const handleMyPushSensorsClose = () => { setDlgMyPushSensors(false) }
+
+  /**---------------- */
 
   return (
     <div className="Main">
@@ -132,9 +139,22 @@ export default function Main() {
             aria-haspopup="true"
             onClick={handleStatisticsOpen}
             color="inherit"
+            title="Data collection statistics"
           >
             <EqualizerIcon />
           </IconButton>
+
+          {user !== null && <IconButton
+
+            edge="end"
+            aria-label="my-push-sensors"
+            aria-haspopup="true"
+            onClick={showMyPushSensors}
+            color="inherit"
+            title="My configured sensor data push"
+          >
+            <CloudUploadIcon />
+          </IconButton>}
 
           <IconButton
             edge="end"
@@ -142,6 +162,7 @@ export default function Main() {
             aria-haspopup="true"
             onClick={handleLoginOpen}
             color="inherit"
+            title="User account"
           >
             <AccountCircleIcon />
           </IconButton>
@@ -218,6 +239,27 @@ export default function Main() {
         </DialogActions>
       </Dialog>
 
+      {/* ------------------------- */}
+
+      <Dialog
+        open={dlgMyPushSensors}
+        onClose={handleMyPushSensorsClose}
+        aria-labelledby="my-push-sensor-dialog-title"
+        aria-describedby="my-push-sensor-dialog-description"
+        fullScreen={true}
+      >
+        <DialogTitle id="my-push-sensor-dialog-title">{"My Push Sensors"}</DialogTitle>
+        <DialogContent>
+          {dlgMyPushSensors && <MyPushSensors onSearchResultClick={handleSearchResultClick} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleMyPushSensorsClose} color="primary" autoFocus>
+            Close
+  </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* ------------------------- */}
     </div >
   );
 }

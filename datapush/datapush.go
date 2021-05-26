@@ -75,7 +75,7 @@ func handlePushInterval(intervalInMinutes int) {
 			}
 
 			if sourceSensorRow == nil {
-				log.Printf("No new values to push. device: %v, sensor: %v", pushRow["target_device_id"], pushRow["target_sensor_id"])
+				// log.Printf("No new values to push. device: %v, sensor: %v", pushRow["target_device_id"], pushRow["target_sensor_id"])
 				continue
 			}
 
@@ -84,7 +84,12 @@ func handlePushInterval(intervalInMinutes int) {
 			pushTime := time.Now()
 			value := sourceSensorRow["value"].(string)
 
-			err = PushDataToWaziup(pushRow["token"].(string), pushRow["target_device_id"].(string), pushRow["target_sensor_id"].(string), value, pushTime)
+			sensorTimestamp := pushTime
+			if pushRow["use_original_time"] != nil && pushRow["use_original_time"].(bool) {
+				sensorTimestamp = sourceSensorRow["created_at"].(time.Time)
+			}
+
+			err = PushDataToWaziup(pushRow["token"].(string), pushRow["target_device_id"].(string), pushRow["target_sensor_id"].(string), value, sensorTimestamp)
 			if err != nil {
 				continue
 			}
@@ -102,17 +107,18 @@ func handlePushInterval(intervalInMinutes int) {
 
 func UpdatePushSettingLastEntry(id int64, lastPushedEntryId int64, lastPushTime time.Time) error {
 
-	_, err := global.DB.Update("push_settings",
-		database.RowType{
-			"last_pushed_entry_id": lastPushedEntryId,
-			"last_push_time":       lastPushTime,
-		},
-		database.RowType{
-			"id": id,
-		},
-	)
+	SQL := `UPDATE "push_settings" 
+			SET 
+				"last_pushed_entry_id" = $1,
+				"last_push_time" = $2,
+				"pushed_count" = "pushed_count" + 1
+			WHERE 
+				"id" = $3`
+
+	params := database.QueryParams{lastPushedEntryId, lastPushTime, id}
+	_, err := global.DB.Exec(SQL, params)
 	if err != nil {
-		log.Printf("\nError in updating `push_settings`: %v \nid: %v", err, id)
+		log.Printf("\nError in updating `push_settings`: %v \nSQL: %v\nParams: %v", err, SQL, params)
 	}
 
 	return err
@@ -176,7 +182,7 @@ func PushDataToWaziup(token string, deviceId string, sensorId string, value stri
 
 	if resp.StatusCode != 204 {
 		err := fmt.Errorf("waziup api error (%v): %v ", resp.StatusCode, resp.Status)
-		log.Printf("[PUSH ] Waziup API Error: %v", err)
+		log.Printf("[PUSH ] Waziup API Error: %v \nAPI path: %v", err, apiPath)
 		return err
 	}
 

@@ -214,6 +214,8 @@ export type SensorPushSettings = {
   active: boolean;
   push_interval: number;
   last_push_time?: Date;
+  use_original_time?: boolean;
+  pushed_count?: number;
 };
 
 export type AllSensorPushSettings = {
@@ -280,5 +282,16 @@ export type SensorType = {
   devId: string;
   title: string; // devName + name
 };
+
+/*--------------*/
+
+export async function getMyPushSensors(page: number): Promise<SensorsData> {
+  if (!page) {
+    page = 1;
+  }
+  var resp = await fetch(`${API_URL}myPushSettings/sensors?page=${page}`);
+  if (!resp.ok) await failResp(resp);
+  return await resp.json();
+}
 
 /*--------------*/

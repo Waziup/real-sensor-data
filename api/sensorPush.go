@@ -26,6 +26,8 @@ type SensorPushSettings struct {
 	LastPushedEntryId int64     `json:"last_pushed_entry_id"`
 	PushInterval      int       `json:"push_interval"`
 	LastPushTime      time.Time `json:"last_push_time"`
+	UseOriginalTime   bool      `json:"use_original_time"`
+	PushedCount       bool      `json:"pushed_count"`
 }
 
 /*-------------*/
@@ -71,12 +73,13 @@ func PostSensorPushSettings(resp http.ResponseWriter, req *http.Request, params 
 	/*------------*/
 
 	row := database.RowType{
-		"user_id":          userId,
-		"sensor_id":        sensorId,
-		"target_device_id": inputRecord.TargetDeviceId,
-		"target_sensor_id": inputRecord.TargetSensorId,
-		"active":           inputRecord.Active,
-		"push_interval":    inputRecord.PushInterval,
+		"user_id":           userId,
+		"sensor_id":         sensorId,
+		"target_device_id":  inputRecord.TargetDeviceId,
+		"target_sensor_id":  inputRecord.TargetSensorId,
+		"active":            inputRecord.Active,
+		"push_interval":     inputRecord.PushInterval,
+		"use_original_time": inputRecord.UseOriginalTime,
 	}
 
 	if inputRecord.ID == 0 { // New record
@@ -208,7 +211,9 @@ func GetSensorPushSettings(resp http.ResponseWriter, req *http.Request, params r
 					"target_sensor_id",
 					"active",
 					"push_interval",
-					"last_push_time"
+					"last_push_time",
+					"use_original_time",
+					"pushed_count"
 					
 			FROM	"push_settings"
 			WHERE
@@ -217,6 +222,73 @@ func GetSensorPushSettings(resp http.ResponseWriter, req *http.Request, params r
 			LIMIT $3 OFFSET $4`
 
 	rows, err := global.DB.Query(SQL, database.QueryParams{sensorId, userId, limit, offset})
+	if err != nil {
+		log.Printf("Error in db query: %v", err)
+		http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	tools.SendJSON(resp, map[string]interface{}{"pagination": pagination, "rows": rows})
+}
+
+/*-------------*/
+/*
+* This function implements GET /myPushSettings/sensors
+* This function retrieves the sensors that the logged-in user has configured push-settings for
+ */
+func GetMyPushSensors(resp http.ResponseWriter, req *http.Request, params routing.Params) {
+
+	userId, err := getAuthorizedUserID(resp, req)
+	if err != nil {
+		http.Error(resp, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	/*------------*/
+
+	limit, offset, page := tools.GetLimitOffset(req)
+
+	/*------*/
+
+	totalRows := int64(0)
+	{
+		SQL := `SELECT COUNT(*) AS "total" 
+				FROM ( SELECT s.* FROM 
+							"push_settings" AS p, 
+							"sensors" AS s 
+						WHERE 
+							s."id" = p."sensor_id"	AND
+							p."user_id" = $1
+						GROUP BY s."id") AS "tmp"`
+		rows, err := global.DB.Query(SQL, database.QueryParams{userId})
+		if err != nil {
+			log.Printf("Error in db query: %v", err)
+			http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)
+			return
+		}
+		totalRows = rows[0]["total"].(int64)
+	}
+
+	totalPages := int64(math.Ceil(float64(totalRows) / float64(global.RowsPerPage)))
+	pagination := map[string]interface{}{
+		"current_page":  page,
+		"total_pages":   totalPages,
+		"total_entries": totalRows,
+	}
+
+	/*------*/
+
+	SQL := `SELECT s.* 
+			FROM 
+				"push_settings" AS p, 
+				"sensors" AS s 
+			WHERE 
+				s."id" = p."sensor_id"	AND
+				p."user_id" = $1
+			GROUP BY s."id"
+			LIMIT $2 OFFSET $3`
+
+	rows, err := global.DB.Query(SQL, database.QueryParams{userId, limit, offset})
 	if err != nil {
 		log.Printf("Error in db query: %v", err)
 		http.Error(resp, "Internal Server Error: "+err.Error(), http.StatusInternalServerError)

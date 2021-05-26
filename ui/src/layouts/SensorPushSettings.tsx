@@ -48,7 +48,13 @@ export default function SensorPushSettings(props: Props) {
         // return () => {}
     }, [])
 
+
     /**--------------- */
+
+    const [originalTimestamp, setOriginalTimestamp] = useState(false)
+    const handleOriginalTimestamp = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setOriginalTimestamp(event.target.checked);
+    }
     /**--------------- */
 
     const [activePush, setActivePush] = useState(true)
@@ -59,7 +65,6 @@ export default function SensorPushSettings(props: Props) {
     /**--------------- */
 
     const [editMode, setEditMode] = useState(false)
-    const [editRecordId, setEditRecordId] = useState(0)
     const [savingPushSettings, setSavingPushSettings] = useState<boolean>(false)
     const savePushSettings = () => {
 
@@ -69,8 +74,9 @@ export default function SensorPushSettings(props: Props) {
             target_device_id: selectedSensor.devId,
             target_sensor_id: selectedSensor.id,
             active: activePush,
-            id: editMode ? editRecordId : 0, //default:0 means insert a new record
+            id: editMode ? recordId : 0, //default:0 means insert a new record
             push_interval: pushInterval,
+            use_original_time: originalTimestamp,
         }
 
         setSavingPushSettings(true);
@@ -160,12 +166,13 @@ export default function SensorPushSettings(props: Props) {
         setPushInterval(data.push_interval);
         setActivePush(data.active);
         setRecordId(data.id);
+        setOriginalTimestamp(data.use_original_time == true);
 
         /**--------- */
 
         const devName = userDevices.find(o => o.devId == data.target_device_id)?.devName || data.target_device_id;
         const sensorName = userDevices.find(o => o.id == data.target_sensor_id)?.name || data.target_sensor_id;
-        const firstLetter = devName[0].toUpperCase();
+        // const firstLetter = devName[0].toUpperCase();
 
         setSelectedSensor({
             // firstLetter: /[0-9]/.test(firstLetter) ? '0-9' : firstLetter,
@@ -209,6 +216,7 @@ export default function SensorPushSettings(props: Props) {
         setPushInterval(10);
         setActivePush(true);
         setRecordId(0);
+        setOriginalTimestamp(false);
     }
 
     /**--------------- */
@@ -263,6 +271,19 @@ export default function SensorPushSettings(props: Props) {
                     onChange={handleActiveChange}
                     color="primary"
                     name="activePush"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                />
+            </Grid>
+
+            <Grid item xs={3}>
+                <Typography gutterBottom>Use Original Timestamp</Typography>
+            </Grid>
+            <Grid item xs={9}>
+                <Switch
+                    checked={originalTimestamp}
+                    onChange={handleOriginalTimestamp}
+                    color="primary"
+                    name="originalTimestamp"
                     inputProps={{ 'aria-label': 'primary checkbox' }}
                 />
             </Grid>

@@ -233,6 +233,7 @@ export default function DataTablePushSettings(props: Props) {
                         <StyledTableCell>Status</StyledTableCell>
                         <StyledTableCell>Interval</StyledTableCell>
                         <StyledTableCell>Last Push</StyledTableCell>
+                        <StyledTableCell>Total Push</StyledTableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -258,6 +259,9 @@ export default function DataTablePushSettings(props: Props) {
                             </StyledTableCell>
                             <StyledTableCell component="th" scope="row" >
                                 {lastPushTime}
+                            </StyledTableCell>
+                            <StyledTableCell component="th" scope="row" >
+                                {row?.pushed_count?.toLocaleString()}
                             </StyledTableCell>
                         </StyledTableRow>)
                     })}

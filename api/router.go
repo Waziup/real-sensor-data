@@ -33,6 +33,7 @@ func setupRouter() *routing.Router {
 	router.GET("/sensors/:sensor_id/pushSettings", GetSensorPushSettings)
 	router.POST("/sensors/:sensor_id/pushSettings", PostSensorPushSettings)
 	router.DELETE("/sensors/:sensor_id/pushSettings/:id", DeleteSensorPushSettings)
+	router.GET("/myPushSettings/sensors", GetMyPushSensors)
 
 	router.GET("/search/sensors/:query", GetSearchSensors)
 
