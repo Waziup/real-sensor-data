@@ -59,8 +59,6 @@ export default function Main() {
 
   useEffect(() => {
 
-    handleSearchResultClick({ id: 3494 });
-
     isAuthorized(); // If user refreshes the page, she/he will be still logged in if was before
     // return () => {}
   }, [])

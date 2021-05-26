@@ -150,7 +150,7 @@ export default function Sensor(props: Props) {
 
     /**------------------ */
 
-    const [tabValue, setTabValue] = useState(2)
+    const [tabValue, setTabValue] = useState(0)
     const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         setTabValue(newValue);
     };

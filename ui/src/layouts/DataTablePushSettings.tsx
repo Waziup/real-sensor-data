@@ -215,8 +215,8 @@ export default function DataTablePushSettings(props: Props) {
 
     /**--------------- */
 
-    if (pushSettingsList?.rows?.length == 0) {
-        return <></>
+    if (!pushSettingsList?.rows || pushSettingsList?.rows?.length == 0) {
+        return (<Grid container justify="center">There is no push intervals configured for this sensor</Grid>)
     }
 
     /**--------------- */
