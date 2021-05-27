@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import SearchBar from '../components/SearchBar'
 import * as API from "../api";
 import DataTable, { DataTableRow } from '../components/DataTable';
+import LoginForm from './LoginForm';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -37,6 +38,7 @@ export default function MyPushSensors(props: Props) {
 
     /**------------ */
 
+    const [err, setErr] = useState<API.HttpError>(null)
     const [pagination, setPagination] = useState(null as API.Pagination)
     const [sensorsRows, setSensorsRows] = useState(null as DataTableRow[])
     const [searchLoading, setLoading] = useState(false)
@@ -56,9 +58,13 @@ export default function MyPushSensors(props: Props) {
                         });
                     }
                 }
-                setSensorsRows(tableRows)
+                setSensorsRows(tableRows);
+                setErr(null);
             },
-            err => { console.error(err); }
+            err => {
+                console.error(err);
+                setErr(err)
+            }
         ).finally(() => {
             setLoading(false)
         })
@@ -89,6 +95,13 @@ export default function MyPushSensors(props: Props) {
         } else {
             dataTable = <Box component="span">No Sensors Found!</Box>
         }
+    }
+
+    /**------------ */
+
+    // If authorization failed
+    if (err && err.status == 401) {
+        return <LoginForm onSuccess={() => { load(1); }} />
     }
 
     /**------------ */
