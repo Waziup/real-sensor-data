@@ -47,7 +47,8 @@ func Init() {
 
 			time.Sleep(3 * time.Second)
 
-			fmt.Printf("\nThe next run is in %d minutes", dataExtractionInterval)
+			nextRunTime := time.Now().Add(time.Duration(dataExtractionInterval) * time.Minute).Format(time.RFC1123)
+			fmt.Printf("\nThe next run will be at: `%v`", nextRunTime)
 			time.Sleep(time.Duration(dataExtractionInterval) * time.Minute)
 
 			/*---------*/
