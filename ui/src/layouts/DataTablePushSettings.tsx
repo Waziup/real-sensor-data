@@ -22,6 +22,7 @@ import * as API from "../api";
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
 import { CircularProgress, Grid, TableHead } from '@material-ui/core';
+import LoginForm from './LoginForm';
 let timeAgo: TimeAgo
 try {
     TimeAgo.addDefaultLocale(en)
@@ -192,17 +193,27 @@ export default function DataTablePushSettings(props: Props) {
 
     const [loadingPushSettings, setLoadingPushSettings] = useState<boolean>(false)
     const [pushSettingsList, setPushSettingsList] = useState<API.AllSensorPushSettings>(null)
+    const [err, setErr] = useState<API.HttpError>(null)
     const loadPushSettings = (page: number) => {
         setLoadingPushSettings(true)
         API.getPushSettings(props.sensorId, page).then(
             res => {
                 setPushSettingsList(res);
                 loadTimeout = setTimeout(() => { loadPushSettings(page); }, 60 * 1000); // Refresh the table every minute
+                setErr(null);
             },
             err => {
                 console.error(err);
+                setErr(err);
             }
         ).finally(() => setLoadingPushSettings(false))
+    }
+
+    /**--------------- */
+
+    // If authorization failed
+    if (err && err.status == 401) {
+        return <LoginForm onSuccess={() => { loadPushSettings(1); }} />
     }
 
     /**--------------- */

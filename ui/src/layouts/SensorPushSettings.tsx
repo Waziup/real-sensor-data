@@ -1,4 +1,4 @@
-import { Button, CircularProgress, createStyles, Grid, makeStyles, Switch, Theme, Typography } from '@material-ui/core';
+import { Button, CircularProgress, createStyles, Grid, makeStyles, Snackbar, Switch, Theme, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react'
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -82,11 +82,19 @@ export default function SensorPushSettings(props: Props) {
         setSavingPushSettings(true);
         API.savePushSettings(data, props.sensorId).then(
             res => {
+
+                if (editMode) {
+                    showSnackMsg("Setting saved")
+                } else {
+                    showSnackMsg("New setting added")
+                }
+
                 let tmp = userDevices
                 setUserDevices(null);
                 setUserDevices(tmp); // Just to make the table refresh ;)
 
                 setErr(null);
+                resetForm(); // Clean up the form
             },
             err => {
                 setErr(err);
@@ -146,6 +154,16 @@ export default function SensorPushSettings(props: Props) {
 
     /**--------------- */
 
+    const [snackMsgOpen, setSnackMsgOpen] = useState(false)
+    const [snackMsgTxt, setSnackMsgTxt] = useState("")
+    const showSnackMsg = (txt: string) => {
+        setSnackMsgTxt(txt);
+        setSnackMsgOpen(true);
+    }
+
+
+    /**--------------- */
+
     let options: any;
     if (userDevices !== null) {
         options = userDevices.map((option: any) => {
@@ -198,6 +216,8 @@ export default function SensorPushSettings(props: Props) {
                 setUserDevices(null);
                 setUserDevices(tmp); // Just to make the table refresh ;)
                 setErr(null);
+                showSnackMsg("Setting removed");
+                resetForm();
             },
             err => {
                 setErr(err);
@@ -332,6 +352,13 @@ export default function SensorPushSettings(props: Props) {
                 <br /><br />
                 <DataTablePushSettings sensorId={props.sensorId} userDevices={userDevices} onRowClick={handleTableRowClick} />
             </Grid>
+            <Snackbar
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                open={snackMsgOpen}
+                onClose={() => setSnackMsgOpen(false)}
+                message={snackMsgTxt}
+                key={"snackbarMsg1"}
+            />
         </Grid>
     );
 
