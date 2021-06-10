@@ -2,7 +2,7 @@
 
 This WebApp extracts sensor data from thingspeak public API, organizes it and can be configured to push data to the Waziup platform for testing, simulation and AI development
 
-To see details and examples about the APIs head over to the [API Documentation](APIs.md).
+To see details and examples about the APIs head over to the [API Documentation](API.md).
 
 ## Quick Setup
 
