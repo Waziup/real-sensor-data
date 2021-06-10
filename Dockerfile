@@ -11,15 +11,12 @@ RUN apk add --no-cache \
     gcc \
     zip \
     && mkdir /build/ \
+    # && cp -r docs /build \
     && go get github.com/go-delve/delve/cmd/dlv
-# && cp scan.awk /build \
-# && cp -r docs /build \
-# && cp -r ui /build \
-# && zip /build/index.zip docker-compose.yml package.json resolv.conf
 
 
 # Let's keep it in a separate layer
-RUN go build -o /build/app -i .
+RUN go build -o /build/app .
 ENTRYPOINT [ "dlv", "debug", "--headless", "--log", "--listen=:2345", "--api-version=2"]
 
 # ENTRYPOINT ["tail", "-f", "/dev/null"]
@@ -41,7 +38,16 @@ FROM alpine:latest AS production
 WORKDIR /app/
 COPY --from=development /build .
 RUN apk --no-cache add \
-    curl \
-    && mv ./index.zip /
+    curl 
+
+COPY ui/node_modules/react/umd ui/node_modules/react/umd
+COPY ui/node_modules/react-dom/umd ui/node_modules/react-dom/umd
+COPY ui/index.html \
+    ui/favicon.ico \
+    ui/
+COPY ui/dist ui/dist
 
 ENTRYPOINT ["./app"]
+
+#  go get -v  golang.org/x/tools/cmd/godoc
+# godoc -http=:8080 -goroot /go/
