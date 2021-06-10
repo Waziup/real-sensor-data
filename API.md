@@ -369,6 +369,8 @@ curl -X GET -H 'Content-Type: application/json' -H 'Authorization: Bearer $2a$10
 }
 ```
 
+---
+
 ### GET /search/sensors/:query
 
 This API searches through the collected sensors and retrieves the matching sensors.
