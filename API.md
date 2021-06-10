@@ -2,7 +2,23 @@
 
 ##### Table of Content
 
-- [GET /serverReady](#get-serverready)
+- [POST /auth](#post-auth)
+- [POST /auth/logout](#post-authlogout)
+- [GET /dataCollection/status](#get-datacollectionstatus)
+- [GET /dataCollection/statistics](#get-datacollectionstatistics)
+- [GET /sensors](#get-sensors)
+- [GET /sensors/:sensor_id](#get-sensorssensor_id)
+- [GET /sensors/:sensor_id/values](#get-sensorssensor_idvalues)
+- [GET /sensors/:sensor_id/pushSettings [auth required]](#get-sensorssensor_idpushsettings-auth-required)
+- [POST /sensors/:sensor_id/pushSettings [auth required]](#post-sensorssensor_idpushsettings-auth-required)
+- [DELETE /sensors/:sensor_id/pushSettings/:id [auth required]](#delete-sensorssensor_idpushsettingsid-auth-required)
+- [GET /myPushSettings/sensors [auth required]](#get-mypushsettingssensors-auth-required)
+- [GET /search/sensors/:query](#get-searchsensorsquery)
+- [GET /channels](#get-channels)
+- [GET /channels/:channel_id](#get-channelschannel_id)
+- [GET /channels/:channel_id/sensors](#get-channelschannel_idsensors)
+- [GET /user](#get-user)
+- [GET /userDevices](#get-userdevices)
 
 ### POST /auth
 
