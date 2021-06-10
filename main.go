@@ -6,8 +6,8 @@ import (
 	"sensor-data-simulator/database"
 	"sensor-data-simulator/datacollection"
 	"sensor-data-simulator/datapush"
+	"sensor-data-simulator/dbinit"
 	"sensor-data-simulator/global"
-	// "github.com/influxdata/influxdb-client-go/v3"
 )
 
 func main() {
@@ -23,9 +23,17 @@ func main() {
 	global.DB = database.New(database.Postgres, psqlconn)
 	defer global.DB.Close()
 
+	/*--------*/
+
+	dbinit.DatabaseInit()
+
+	/*--------*/
+
 	datapush.Init()
 
 	datacollection.Init()
+
+	/*--------*/
 
 	api.ListenAndServeHTTP()
 }
