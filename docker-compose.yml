@@ -1,48 +1,48 @@
-version: '3.6'
+version: "3.6"
 services:
   main-app:
-      image: waziup/sensor-data-simulator:latest
-      container_name: waziup.sensor-data-simulator
-      build:
-        context: ./
-        target: development  # development | test | production (default) # docker-compose up --build
-      depends_on: 
-        - postgres
-      ports: 
-        - 8080:8080
-        - 2345:2345
-      logging:
-        driver: "json-file"
-        options:
-          max-size: "200k"
-          max-file: "10"
-      volumes:
-        - ./:/root/app
-        - ./:/go/src/app
-      networks:
-        - sensordata
-      environment:
-        SERVING_ADDR: ${SERVING_ADDR:-:8080}
-        DATA_EXTRACTION_INTERVAL: ${DATA_EXTRACTION_INTERVAL:-60} # in minutes
-        POSTGRES_DB: ${POSTGRES_DB:-waziup}
-        POSTGRES_USER: ${POSTGRES_USER:-root}
-        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
-        POSTGRES_PORT: ${POSTGRES_PORT:-5432}
-        POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
-        WAZIUP_API_PATH: ${SERVING_ADDR:-https://api.waziup.io/api/v2/}
-        # - INFLUXDB_ADDR=http://influxdb:8086
-        # - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
-        # - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
-        # - INFLUXDB_ORG=${INFLUXDB_ORG}
-        # - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
-        # - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
-      healthcheck:
-        test: curl --fail http://localhost/ || exit 1
-        interval: 30s
-        retries: 10 # Will try for 5 minutes      
-      restart: always
-      security_opt:
-        - "seccomp:unconfined"
+    image: waziup/sensor-data-simulator:latest
+    container_name: waziup.sensor-data-simulator
+    build:
+      context: ./
+      # target: development  # development | test | production (default) # docker-compose up --build
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+      - 2345:2345
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+    volumes:
+      - ./:/root/app
+      - ./:/go/src/app
+    networks:
+      - sensordata
+    environment:
+      SERVING_ADDR: ${SERVING_ADDR:-:8080}
+      DATA_EXTRACTION_INTERVAL: ${DATA_EXTRACTION_INTERVAL:-60} # in minutes
+      POSTGRES_DB: ${POSTGRES_DB:-waziup}
+      POSTGRES_USER: ${POSTGRES_USER:-root}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+      POSTGRES_HOST: ${POSTGRES_HOST:-postgres}
+      WAZIUP_API_PATH: ${SERVING_ADDR:-https://api.waziup.io/api/v2/}
+      # - INFLUXDB_ADDR=http://influxdb:8086
+      # - INFLUXDB_USERNAME=${INFLUXDB_USERNAME}
+      # - INFLUXDB_PASSWORD=${INFLUXDB_PASSWORD}
+      # - INFLUXDB_ORG=${INFLUXDB_ORG}
+      # - INFLUXDB_BUCKET=${INFLUXDB_BUCKET}
+      # - INFLUXDB_TOKEN=${INFLUXDB_TOKEN}
+    healthcheck:
+      test: curl --fail http://localhost/ || exit 1
+      interval: 30s
+      retries: 10 # Will try for 5 minutes
+    restart: always
+    security_opt:
+      - "seccomp:unconfined"
     #   entrypoint: "/root/app/app"
 
   #----------------#
@@ -63,7 +63,7 @@ services:
     ports:
       - 5432:5432
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root" ]
+      test: ["CMD", "pg_isready", "-q", "-d", "postgres", "-U", "root"]
       timeout: 45s
       interval: 10s
       retries: 10
@@ -74,14 +74,14 @@ services:
   pgadmin:
     container_name: pgadmin
     image: dpage/pgadmin4
-    depends_on: 
+    depends_on:
       - postgres
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
-       - ./pgadmin:/root/.pgadmin
+      - ./pgadmin:/root/.pgadmin
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
