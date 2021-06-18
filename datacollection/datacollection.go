@@ -12,6 +12,7 @@ import (
 	"sensor-data-simulator/global"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -72,6 +73,7 @@ func ExtractChannelsData() {
 	defer func() { global.DataCollectorProgress.ChannelsRunning = false }()
 
 	channelsHitTheLastPage = false
+	var wg sync.WaitGroup
 	for page := 1; ; page++ {
 
 		if channelsHitTheLastPage {
@@ -79,14 +81,25 @@ func ExtractChannelsData() {
 		}
 
 		// processChannelDataExtraction(page) // Execution Time: 50.27s
-		go processChannelDataExtraction(page) // Execution Time: 04.21s
+
+		wg.Add(1)
+		go processChannelDataExtraction(page, &wg) // Execution Time: 04.21s
+
+		// Let's wait for a timeout and when it is over, break and forget about it at all,
+		// because sometimes it keeps waiting for ever.
+		timeout := time.Now().Unix() + 20 // 20 seconds
 
 		// Let's wait for the routins to finish
 		for runtime.NumGoroutine() > global.MaxNumGoRoutines {
 			time.Sleep(200 * time.Millisecond)
+			if time.Now().Unix() > timeout {
+				fmt.Printf("\nTimeout reached! Breaking the thing")
+				return
+			}
 		}
 
 	}
+	wg.Wait()
 
 	fmt.Printf("\n\nAll Done [ New channels: %d ] :)\n\n---------------------------------------------------------\n", global.DataCollectorProgress.NewExtractedChannels)
 }
@@ -108,19 +121,31 @@ func ExtractSensorsData() {
 	}
 
 	totalChannels := float64(len(channels))
+	var wg sync.WaitGroup
 	for chIndex, channel := range channels {
 
 		progress := int(math.Round(100 * (float64(chIndex) + 1) / totalChannels))
 
 		// processChannelSensors(channel) // Execution Time: 9m23.08s
-		go processChannelSensors(channel) // Execution Time: 57.08s
+
+		wg.Add(1)
+		go processChannelSensors(channel, &wg) // Execution Time: 57.08s
+
+		// Let's wait for a timeout and when it is over, break and forget about it at all,
+		// because sometimes it keeps waiting for ever.
+		timeout := time.Now().Unix() + 60 // 60 seconds
 
 		// Let's wait for the routins to finish
 		for runtime.NumGoroutine() > global.MaxNumGoRoutines {
 			global.DataCollectorProgress.SensorsProgress = progress
 			time.Sleep(1 * time.Second)
+			if time.Now().Unix() > timeout {
+				fmt.Printf("\nTimeout reached! Breaking the thing")
+				return
+			}
 		}
 	}
+	wg.Wait()
 
 	global.DataCollectorProgress.SensorsProgress = 100
 
@@ -129,7 +154,9 @@ func ExtractSensorsData() {
 
 /*--------------------------------*/
 
-func processChannelSensors(channel database.RowType) {
+func processChannelSensors(channel database.RowType, wg *sync.WaitGroup) {
+
+	defer wg.Done()
 
 	apiURL := "https://thingspeak.com/channels/%v/feed.json"
 
@@ -281,8 +308,11 @@ func processChannelSensors(channel database.RowType) {
 
 /*--------------------------------*/
 
-func processChannelDataExtraction(page int) {
+func processChannelDataExtraction(page int, wg *sync.WaitGroup) {
 
+	defer wg.Done()
+
+	fmt.Printf("\rPage %-5d Started...", page)
 	apiURL := "https://api.thingspeak.com/channels/public.json?page="
 
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s%d", apiURL, page), nil)
