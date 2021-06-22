@@ -87,7 +87,7 @@ func ExtractChannelsData() {
 
 		// Let's wait for a timeout and when it is over, break and forget about it at all,
 		// because sometimes it keeps waiting for ever.
-		timeout := time.Now().Unix() + 20 // 20 seconds
+		timeout := time.Now().Unix() + 5*60 // 5 minutes
 
 		// Let's wait for the routins to finish
 		for runtime.NumGoroutine() > global.MaxNumGoRoutines {
@@ -133,7 +133,7 @@ func ExtractSensorsData() {
 
 		// Let's wait for a timeout and when it is over, break and forget about it at all,
 		// because sometimes it keeps waiting for ever.
-		timeout := time.Now().Unix() + 60 // 60 seconds
+		timeout := time.Now().Unix() + 10*60 // 10 minutes
 
 		// Let's wait for the routins to finish
 		for runtime.NumGoroutine() > global.MaxNumGoRoutines {

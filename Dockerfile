@@ -1,4 +1,4 @@
-FROM golang:alpine AS development
+FROM golang:alpine3.12 AS development
 
 ENV CGO_ENABLED=0
 COPY . /go/src/app/
